@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caderno de Rotinas</title>
+    <title>Caderno de Rotinas Pro</title>
     <style>
         :root {
             --bg-body: #0f172a;
@@ -33,7 +33,7 @@
             margin: auto;
         }
 
-        /* NAVEGAÇÃO PRINCIPAL - 3 COLUNAS */
+        /* NAVEGAÇÃO PRINCIPAL */
         .main-nav {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -46,7 +46,7 @@
         }
 
         .nav-mode-btn {
-            padding: 14px 5px;
+            padding: 12px 5px;
             border: none;
             border-radius: 12px;
             background: transparent;
@@ -98,35 +98,41 @@
             border-color: var(--primary);
         }
 
-        /* CARD DE CALENDÁRIO */
+        /* CARD DE CALENDÁRIO - AJUSTADO PARA CORRIGIR O BUG */
         .calendar-box {
             background: var(--bg-card);
-            padding: 20px;
+            padding: 15px;
             border-radius: 18px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border: 1px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .date-display {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: var(--accent);
-            margin-bottom: 15px;
             display: block;
         }
 
+        /* AJUSTE NO INPUT DE DATA PARA MOBILE */
         input[type="date"] {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             border: 2px solid var(--bg-input);
             background: var(--bg-body);
             color: white;
             font-size: 16px;
             outline: none;
+            appearance: none; /* Remove estilos padrão do sistema */
+            -webkit-appearance: none;
+            display: block;
         }
 
-        /* SEÇÃO VISÃO GERAL (NOVO) */
+        /* VISÃO GERAL */
         .timeline-container { display: flex; flex-direction: column; gap: 15px; }
         .timeline-day-card {
             background: var(--bg-card);
@@ -266,7 +272,6 @@
         <button class="nav-mode-btn" id="btnModeGeral">Visão Geral</button>
     </div>
 
-    <!-- ABA 1: ROTINA -->
     <div id="sectionRotina" class="view-section active">
         <div class="week-grid">
             <button class="day-btn active" data-dia="segunda">Seg</button>
@@ -279,7 +284,6 @@
         </div>
     </div>
 
-    <!-- ABA 2: AGENDA -->
     <div id="sectionCalendario" class="view-section">
         <div class="calendar-box">
             <span id="fullDateDisplay" class="date-display">Carregando...</span>
@@ -294,15 +298,11 @@
         </div>
     </div>
 
-    <!-- ABA 3: VISÃO GERAL (O CALENDÁRIO DE COMPROMISSOS) -->
     <div id="sectionGeral" class="view-section">
         <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--accent); text-align: center;">RESUMO DE COMPROMISSOS</h3>
-        <div id="timelineContent" class="timeline-container">
-            <!-- Gerado via JS -->
-        </div>
+        <div id="timelineContent" class="timeline-container"></div>
     </div>
 
-    <!-- AREA DE EXECUÇÃO (Input e Lista - Escondida na Visão Geral) -->
     <div id="areaInteracao">
         <div class="progress-card">
             <div class="progress-bar-bg">
@@ -365,7 +365,6 @@
             const dados = snapshot.val() || {};
             const datasComTarefa = Object.keys(dados).sort();
             
-            // Atualiza tags da aba 2
             eventTags.innerHTML = "";
             if(datasComTarefa.length === 0) {
                 eventTags.innerHTML = `<span style="color:var(--text-muted); font-size:11px;">Nenhum evento futuro.</span>`;
@@ -382,8 +381,6 @@
                     eventTags.appendChild(tag);
                 });
             }
-
-            // Atualiza Timeline da aba 3
             renderTimeline(dados, datasComTarefa);
         });
     }
@@ -394,25 +391,14 @@
             timelineContent.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:13px;">Sua agenda está vazia.</p>`;
             return;
         }
-
         datas.forEach(data => {
             const card = document.createElement('div');
             card.className = 'timeline-day-card';
-            
             let htmlTarefas = "";
             Object.entries(dados[data]).forEach(([id, t]) => {
-                htmlTarefas += `
-                    <div class="timeline-task-item ${t.done ? 'done' : ''}">
-                        <span>${t.text}</span>
-                        <span>${t.done ? '✅' : '⏳'}</span>
-                    </div>`;
+                htmlTarefas += `<div class="timeline-task-item ${t.done ? 'done' : ''}"><span>${t.text}</span><span>${t.done ? '✅' : '⏳'}</span></div>`;
             });
-
-            card.innerHTML = `
-                <span class="timeline-date">${formatarDataBR(data, true).toUpperCase()}</span>
-                ${htmlTarefas}
-                <button style="margin-top:10px; background:none; border:none; color:var(--primary); font-size:10px; cursor:pointer; font-weight:bold;" onclick="window.irParaData('${data}')">EDITAR ESTE DIA →</button>
-            `;
+            card.innerHTML = `<span class="timeline-date">${formatarDataBR(data, true).toUpperCase()}</span>${htmlTarefas}<button style="margin-top:10px; background:none; border:none; color:var(--primary); font-size:10px; cursor:pointer; font-weight:bold;" onclick="window.irParaData('${data}')">EDITAR ESTE DIA →</button>`;
             timelineContent.appendChild(card);
         });
     }
@@ -428,15 +414,11 @@
         document.getElementById('btnModeRotina').classList.toggle('active', modo === 'rotina');
         document.getElementById('btnModeCalendario').classList.toggle('active', modo === 'calendario');
         document.getElementById('btnModeGeral').classList.toggle('active', modo === 'geral');
-        
         document.getElementById('sectionRotina').classList.toggle('active', modo === 'rotina');
         document.getElementById('sectionCalendario').classList.toggle('active', modo === 'calendario');
         document.getElementById('sectionGeral').classList.toggle('active', modo === 'geral');
-        
-        // Esconde input na visão geral
         document.getElementById('areaInteracao').style.display = (modo === 'geral') ? 'none' : 'block';
         btnAdd.classList.toggle('mode-cal', modo === 'calendario');
-
         if(modo === 'rotina') conectarBanco(`rotina_semanal/${diaSemanaAtual}`);
         if(modo === 'calendario') atualizarVisualCalendario(dataCalendarioAtual);
     }
@@ -451,10 +433,8 @@
         if (listenerAtivo) off(listenerAtivo);
         const dbRef = ref(db, caminho);
         listenerAtivo = dbRef;
-        
         const label = caminho.includes('rotina') ? diaSemanaAtual.toUpperCase() : dataCalendarioAtual.split('-').reverse().join('/');
         document.getElementById('labelContexto').innerText = label;
-        
         onValue(dbRef, (snapshot) => render(snapshot.val() || {}));
     }
 
@@ -462,19 +442,13 @@
         taskList.innerHTML = "";
         const entries = Object.entries(tasks);
         let concluido = 0;
-
         entries.forEach(([id, task]) => {
             if(task.done) concluido++;
             const item = document.createElement('div');
             item.className = `task-item ${task.done ? 'done' : ''}`;
-            item.innerHTML = `
-                <div class="checkbox" onclick="window.toggleTask('${id}', ${task.done})">${task.done ? '✓' : ''}</div>
-                <div class="task-text">${task.text}</div>
-                <button class="btn-del" onclick="window.deleteTask('${id}')">✕</button>
-            `;
+            item.innerHTML = `<div class="checkbox" onclick="window.toggleTask('${id}', ${task.done})">${task.done ? '✓' : ''}</div><div class="task-text">${task.text}</div><button class="btn-del" onclick="window.deleteTask('${id}')">✕</button>`;
             taskList.appendChild(item);
         });
-
         const perc = entries.length > 0 ? Math.round((concluido / entries.length) * 100) : 0;
         document.getElementById('progressBar').style.width = perc + "%";
         document.getElementById('labelPercent').innerText = perc + "%";
@@ -512,7 +486,6 @@
     });
 
     datePicker.onchange = (e) => atualizarVisualCalendario(e.target.value);
-    
     monitorarTodosEventos();
     setModo('rotina');
 
