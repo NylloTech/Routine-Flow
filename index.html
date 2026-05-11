@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caderno de Rotinas</title>
+    <title>Caderno de Rotinas Pro</title>
     <style>
         :root {
             --bg-body: #0f172a;
@@ -15,6 +15,7 @@
             --text-main: #f8fafc;
             --text-muted: #64748b;
             --done-color: #475569;
+            --danger: #ef4444;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -23,7 +24,7 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 10px;
+            padding: 15px;
         }
 
         .app-container {
@@ -32,27 +33,29 @@
             margin: auto;
         }
 
-        /* NAVEGAÇÃO PRINCIPAL (ABAS DE MODO) */
+        /* NAVEGAÇÃO PRINCIPAL - 3 COLUNAS */
         .main-nav {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
             margin-bottom: 20px;
             background: var(--bg-card);
-            padding: 5px;
-            border-radius: 15px;
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--bg-input);
         }
 
         .nav-mode-btn {
-            padding: 12px;
+            padding: 14px 5px;
             border: none;
             border-radius: 12px;
             background: transparent;
             color: var(--text-muted);
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 11px;
+            text-transform: uppercase;
         }
 
         .nav-mode-btn.active {
@@ -61,16 +64,19 @@
         }
 
         /* CONTEÚDO DAS SEÇÕES */
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section { display: none; animation: slideDown 0.3s ease; }
         .view-section.active { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
-        /* ESTILO DAS SUB-ABAS (DIAS DA SEMANA) */
+        /* ESTILO DOS DIAS DA SEMANA */
         .week-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            gap: 6px;
             margin-bottom: 20px;
         }
 
@@ -78,11 +84,11 @@
             background: var(--bg-card);
             color: var(--text-muted);
             border: 1px solid var(--bg-input);
-            padding: 10px 0;
-            border-radius: 8px;
+            padding: 12px 0;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
         }
 
@@ -92,39 +98,91 @@
             border-color: var(--primary);
         }
 
-        /* CALENDÁRIO */
-        .calendar-picker-box {
+        /* CARD DE CALENDÁRIO */
+        .calendar-box {
             background: var(--bg-card);
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 10px;
             border: 1px solid var(--accent);
+        }
+
+        .date-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 15px;
+            display: block;
         }
 
         input[type="date"] {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--bg-input);
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px solid var(--bg-input);
             background: var(--bg-body);
             color: white;
-            margin-top: 10px;
+            font-size: 16px;
+            outline: none;
         }
 
-        /* COMPONENTES DE TAREFA */
+        /* SEÇÃO VISÃO GERAL (NOVO) */
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
+        .timeline-day-card {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            border-radius: 12px;
+        }
+        .timeline-date { color: var(--accent); font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block; }
+        .timeline-task-item { font-size: 14px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+        .timeline-task-item.done { text-decoration: line-through; color: var(--text-muted); }
+
+        /* RESUMO DE DIAS COM EVENTOS */
+        .event-summary {
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px dashed var(--accent);
+        }
+
+        .event-summary h4 {
+            font-size: 12px;
+            color: var(--accent);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .event-tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .event-tag {
+            background: var(--accent);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* ÁREA DE PROGRESSO */
         .progress-card {
             background: var(--bg-card);
-            padding: 15px;
-            border-radius: 15px;
+            padding: 18px;
+            border-radius: 18px;
             margin-bottom: 20px;
         }
 
         .progress-bar-bg {
             background: var(--bg-body);
-            height: 8px;
+            height: 10px;
             border-radius: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             overflow: hidden;
         }
 
@@ -132,82 +190,83 @@
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--success));
             width: 0%;
-            transition: 0.5s;
+            transition: 0.6s;
         }
 
+        /* INPUT DE TAREFAS */
         .input-group {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         #taskInput {
             flex: 1;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--bg-input);
+            padding: 16px;
+            border-radius: 14px;
+            border: 2px solid var(--bg-input);
             background: var(--bg-card);
             color: white;
-            outline: none;
+            font-size: 16px;
         }
 
         .btn-add {
             background: var(--primary);
             color: white;
             border: none;
-            width: 55px;
-            border-radius: 12px;
+            width: 60px;
+            border-radius: 14px;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 28px;
         }
 
-        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        .btn-add.mode-cal { background: var(--accent); color: #000; }
+
+        /* LISTA DE TAREFAS */
+        .task-list { display: flex; flex-direction: column; gap: 12px; }
 
         .task-item {
             background: var(--bg-card);
-            padding: 16px;
-            border-radius: 14px;
+            padding: 18px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
 
         .checkbox {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border: 2px solid var(--primary);
-            border-radius: 7px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
 
-        .task-item.done { opacity: 0.5; background: transparent; border: 1px dashed var(--bg-input); }
-        .task-item.done .task-text { color: var(--done-color); text-decoration: line-through; }
+        .task-item.done { opacity: 0.5; }
+        .task-item.done .task-text { text-decoration: line-through; color: var(--done-color); }
         .task-item.done .checkbox { background: var(--success); border-color: var(--success); color: white; }
 
-        .task-text { flex: 1; font-size: 15px; word-break: break-word; }
+        .task-text { flex: 1; }
 
-        .btn-del { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; }
+        .btn-del { color: var(--text-muted); background: none; border: none; cursor: pointer; font-size: 18px; }
 
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="header">
-        <h1 id="mainTitle" style="text-align:center; margin: 15px 0;">Caderno de Rotinas</h1>
-    </div>
+    <h1 style="text-align:center; margin: 20px 0; font-size: 18px; letter-spacing: 2px; color: var(--primary);">MY ROUTINE & AGENDA</h1>
 
-    <!-- NAVEGAÇÃO ENTRE MODOS -->
     <div class="main-nav">
-        <button class="nav-mode-btn active" id="btnModeRotina">Rotina Fixa</button>
-        <button class="nav-mode-btn" id="btnModeCalendario">Calendário</button>
+        <button class="nav-mode-btn active" id="btnModeRotina">Rotina</button>
+        <button class="nav-mode-btn" id="btnModeCalendario">Agenda</button>
+        <button class="nav-mode-btn" id="btnModeGeral">Visão Geral</button>
     </div>
 
-    <!-- SEÇÃO ROTINA (HABITUAL) -->
+    <!-- ABA 1: ROTINA -->
     <div id="sectionRotina" class="view-section active">
         <div class="week-grid">
             <button class="day-btn active" data-dia="segunda">Seg</button>
@@ -220,31 +279,48 @@
         </div>
     </div>
 
-    <!-- SEÇÃO CALENDÁRIO (ESPECÍFICO) -->
+    <!-- ABA 2: AGENDA -->
     <div id="sectionCalendario" class="view-section">
-        <div class="calendar-picker-box">
-            <label style="color:var(--accent); font-weight:bold; font-size: 12px;">Selecione uma Data para Eventos Específicos</label>
+        <div class="calendar-box">
+            <span id="fullDateDisplay" class="date-display">Carregando...</span>
             <input type="date" id="datePicker">
         </div>
-    </div>
-
-    <!-- ÁREA COMUM DE LISTA E PROGRESSO -->
-    <div class="progress-card">
-        <div class="progress-bar-bg">
-            <div class="progress-fill" id="progressBar"></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
-            <span id="labelContexto" style="text-transform: uppercase;">SEGUNDA</span>
-            <span id="labelPercent" style="color: var(--success);">0%</span>
+        
+        <div class="event-summary">
+            <h4>Dias com eventos marcados:</h4>
+            <div id="eventTags" class="event-tag-list">
+                <span style="color:var(--text-muted); font-size:11px;">Buscando eventos...</span>
+            </div>
         </div>
     </div>
 
-    <div class="input-group">
-        <input type="text" id="taskInput" placeholder="Adicionar tarefa...">
-        <button class="btn-add" id="btnAdd">+</button>
+    <!-- ABA 3: VISÃO GERAL (O CALENDÁRIO DE COMPROMISSOS) -->
+    <div id="sectionGeral" class="view-section">
+        <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--accent); text-align: center;">RESUMO DE COMPROMISSOS</h3>
+        <div id="timelineContent" class="timeline-container">
+            <!-- Gerado via JS -->
+        </div>
     </div>
 
-    <div class="task-list" id="taskList"></div>
+    <!-- AREA DE EXECUÇÃO (Input e Lista - Escondida na Visão Geral) -->
+    <div id="areaInteracao">
+        <div class="progress-card">
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
+                <span id="labelContexto">SEGUNDA-FEIRA</span>
+                <span id="labelPercent">0%</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="O que precisa ser feito?">
+            <button class="btn-add" id="btnAdd">+</button>
+        </div>
+
+        <div class="task-list" id="taskList"></div>
+    </div>
 </div>
 
 <script type="module">
@@ -264,44 +340,122 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Variáveis de Controle
-    let modoAtual = 'rotina'; // 'rotina' ou 'calendario'
+    let modoAtual = 'rotina'; 
     let diaSemanaAtual = 'segunda';
-    let dataCalendarioAtual = ''; 
+    let dataCalendarioAtual = new Date().toISOString().split('T')[0];
     let listenerAtivo = null;
 
-    // Elementos UI
     const taskList = document.getElementById('taskList');
     const taskInput = document.getElementById('taskInput');
     const btnAdd = document.getElementById('btnAdd');
-    const labelContexto = document.getElementById('labelContexto');
     const datePicker = document.getElementById('datePicker');
+    const fullDateDisplay = document.getElementById('fullDateDisplay');
+    const eventTags = document.getElementById('eventTags');
+    const timelineContent = document.getElementById('timelineContent');
 
-    // Trocar modo (Rotina vs Calendário)
-    function setModo(modo) {
-        modoAtual = modo;
-        document.querySelectorAll('.nav-mode-btn').forEach(b => b.classList.toggle('active', b.id.includes(modo.charAt(0).toUpperCase() + modo.slice(1))));
-        document.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id.includes(modo.charAt(0).toUpperCase() + modo.slice(1))));
-        
-        if(modo === 'rotina') {
-            conectarBanco(`rotina_semanal/${diaSemanaAtual}`);
-        } else {
-            if(dataCalendarioAtual) conectarBanco(`eventos_calendario/${dataCalendarioAtual}`);
-            else taskList.innerHTML = "<p style='text-align:center; padding:20px; color:var(--text-muted)'>Escolha uma data acima</p>";
-        }
+    function formatarDataBR(dataStr, curta = false) {
+        const data = new Date(dataStr + 'T12:00:00');
+        if(curta) return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', weekday: 'short' });
+        return data.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
 
-    // Conectar ao Firebase
+    function monitorarTodosEventos() {
+        const eventosRef = ref(db, 'eventos_calendario');
+        onValue(eventosRef, (snapshot) => {
+            const dados = snapshot.val() || {};
+            const datasComTarefa = Object.keys(dados).sort();
+            
+            // Atualiza tags da aba 2
+            eventTags.innerHTML = "";
+            if(datasComTarefa.length === 0) {
+                eventTags.innerHTML = `<span style="color:var(--text-muted); font-size:11px;">Nenhum evento futuro.</span>`;
+            } else {
+                datasComTarefa.forEach(data => {
+                    const tag = document.createElement('span');
+                    tag.className = 'event-tag';
+                    tag.innerText = data.split('-').reverse().slice(0,2).join('/');
+                    tag.onclick = () => {
+                        datePicker.value = data;
+                        atualizarVisualCalendario(data);
+                        setModo('calendario');
+                    };
+                    eventTags.appendChild(tag);
+                });
+            }
+
+            // Atualiza Timeline da aba 3
+            renderTimeline(dados, datasComTarefa);
+        });
+    }
+
+    function renderTimeline(dados, datas) {
+        timelineContent.innerHTML = "";
+        if(datas.length === 0) {
+            timelineContent.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:13px;">Sua agenda está vazia.</p>`;
+            return;
+        }
+
+        datas.forEach(data => {
+            const card = document.createElement('div');
+            card.className = 'timeline-day-card';
+            
+            let htmlTarefas = "";
+            Object.entries(dados[data]).forEach(([id, t]) => {
+                htmlTarefas += `
+                    <div class="timeline-task-item ${t.done ? 'done' : ''}">
+                        <span>${t.text}</span>
+                        <span>${t.done ? '✅' : '⏳'}</span>
+                    </div>`;
+            });
+
+            card.innerHTML = `
+                <span class="timeline-date">${formatarDataBR(data, true).toUpperCase()}</span>
+                ${htmlTarefas}
+                <button style="margin-top:10px; background:none; border:none; color:var(--primary); font-size:10px; cursor:pointer; font-weight:bold;" onclick="window.irParaData('${data}')">EDITAR ESTE DIA →</button>
+            `;
+            timelineContent.appendChild(card);
+        });
+    }
+
+    window.irParaData = (data) => {
+        datePicker.value = data;
+        atualizarVisualCalendario(data);
+        setModo('calendario');
+    };
+
+    function setModo(modo) {
+        modoAtual = modo;
+        document.getElementById('btnModeRotina').classList.toggle('active', modo === 'rotina');
+        document.getElementById('btnModeCalendario').classList.toggle('active', modo === 'calendario');
+        document.getElementById('btnModeGeral').classList.toggle('active', modo === 'geral');
+        
+        document.getElementById('sectionRotina').classList.toggle('active', modo === 'rotina');
+        document.getElementById('sectionCalendario').classList.toggle('active', modo === 'calendario');
+        document.getElementById('sectionGeral').classList.toggle('active', modo === 'geral');
+        
+        // Esconde input na visão geral
+        document.getElementById('areaInteracao').style.display = (modo === 'geral') ? 'none' : 'block';
+        btnAdd.classList.toggle('mode-cal', modo === 'calendario');
+
+        if(modo === 'rotina') conectarBanco(`rotina_semanal/${diaSemanaAtual}`);
+        if(modo === 'calendario') atualizarVisualCalendario(dataCalendarioAtual);
+    }
+
+    function atualizarVisualCalendario(data) {
+        dataCalendarioAtual = data;
+        fullDateDisplay.innerText = formatarDataBR(data);
+        conectarBanco(`eventos_calendario/${data}`);
+    }
+
     function conectarBanco(caminho) {
         if (listenerAtivo) off(listenerAtivo);
         const dbRef = ref(db, caminho);
         listenerAtivo = dbRef;
         
-        labelContexto.innerText = caminho.split('/').pop().replace(/-/g, '/');
+        const label = caminho.includes('rotina') ? diaSemanaAtual.toUpperCase() : dataCalendarioAtual.split('-').reverse().join('/');
+        document.getElementById('labelContexto').innerText = label;
         
-        onValue(dbRef, (snapshot) => {
-            render(snapshot.val() || {});
-        });
+        onValue(dbRef, (snapshot) => render(snapshot.val() || {}));
     }
 
     function render(tasks) {
@@ -326,30 +480,27 @@
         document.getElementById('labelPercent').innerText = perc + "%";
     }
 
-    // Ações do Usuário
     window.toggleTask = (id, status) => {
-        const caminho = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}/${id}` : `eventos_calendario/${dataCalendarioAtual}/${id}`;
-        update(ref(db, caminho), { done: !status });
+        const path = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}/${id}` : `eventos_calendario/${dataCalendarioAtual}/${id}`;
+        update(ref(db, path), { done: !status });
     };
 
     window.deleteTask = (id) => {
-        const caminho = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}/${id}` : `eventos_calendario/${dataCalendarioAtual}/${id}`;
-        if(confirm("Excluir?")) remove(ref(db, caminho));
+        const path = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}/${id}` : `eventos_calendario/${dataCalendarioAtual}/${id}`;
+        if(confirm("Excluir tarefa?")) remove(ref(db, path));
     };
 
     btnAdd.onclick = () => {
         const text = taskInput.value.trim();
         if(!text) return;
-        const caminho = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}` : `eventos_calendario/${dataCalendarioAtual}`;
-        if(modoAtual === 'calendario' && !dataCalendarioAtual) return alert("Selecione uma data primeiro!");
-        
-        push(ref(db, caminho), { text, done: false });
+        const path = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}` : `eventos_calendario/${dataCalendarioAtual}`;
+        push(ref(db, path), { text, done: false });
         taskInput.value = "";
     };
 
-    // Listeners de Eventos
     document.getElementById('btnModeRotina').onclick = () => setModo('rotina');
     document.getElementById('btnModeCalendario').onclick = () => setModo('calendario');
+    document.getElementById('btnModeGeral').onclick = () => setModo('geral');
 
     document.querySelectorAll('.day-btn').forEach(btn => {
         btn.onclick = () => {
@@ -360,12 +511,9 @@
         };
     });
 
-    datePicker.onchange = (e) => {
-        dataCalendarioAtual = e.target.value;
-        conectarBanco(`eventos_calendario/${dataCalendarioAtual}`);
-    };
-
-    // Início
+    datePicker.onchange = (e) => atualizarVisualCalendario(e.target.value);
+    
+    monitorarTodosEventos();
     setModo('rotina');
 
 </script>
