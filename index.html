@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caderno de Rotinas</title>
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --primary: #8b5cf6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --done-color: #475569;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        /* NAVEGAÇÃO PRINCIPAL (ABAS DE MODO) */
+        .main-nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-card);
+            padding: 5px;
+            border-radius: 15px;
+        }
+
+        .nav-mode-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-mode-btn.active {
+            background: var(--bg-input);
+            color: white;
+        }
+
+        /* CONTEÚDO DAS SEÇÕES */
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ESTILO DAS SUB-ABAS (DIAS DA SEMANA) */
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .day-btn {
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border: 1px solid var(--bg-input);
+            padding: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .day-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* CALENDÁRIO */
+        .calendar-picker-box {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent);
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--bg-input);
+            background: var(--bg-body);
+            color: white;
+            margin-top: 10px;
+        }
+
+        /* COMPONENTES DE TAREFA */
+        .progress-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-bg {
+            background: var(--bg-body);
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            width: 0%;
+            transition: 0.5s;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--bg-input);
+            background: var(--bg-card);
+            color: white;
+            outline: none;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 55px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .task-item {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--primary);
+            border-radius: 7px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .task-item.done { opacity: 0.5; background: transparent; border: 1px dashed var(--bg-input); }
+        .task-item.done .task-text { color: var(--done-color); text-decoration: line-through; }
+        .task-item.done .checkbox { background: var(--success); border-color: var(--success); color: white; }
+
+        .task-text { flex: 1; font-size: 15px; word-break: break-word; }
+
+        .btn-del { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1 id="mainTitle" style="text-align:center; margin: 15px 0;">Caderno de Rotinas</h1>
+    </div>
+
+    <!-- NAVEGAÇÃO ENTRE MODOS -->
+    <div class="main-nav">
+        <button class="nav-mode-btn active" id="btnModeRotina">Rotina Fixa</button>
+        <button class="nav-mode-btn" id="btnModeCalendario">Calendário</button>
+    </div>
+
+    <!-- SEÇÃO ROTINA (HABITUAL) -->
+    <div id="sectionRotina" class="view-section active">
+        <div class="week-grid">
+            <button class="day-btn active" data-dia="segunda">Seg</button>
+            <button class="day-btn" data-dia="terca">Ter</button>
+            <button class="day-btn" data-dia="quarta">Qua</button>
+            <button class="day-btn" data-dia="quinta">Qui</button>
+            <button class="day-btn" data-dia="sexta">Sex</button>
+            <button class="day-btn" data-dia="sabado">Sáb</button>
+            <button class="day-btn" data-dia="domingo">Dom</button>
+        </div>
+    </div>
+
+    <!-- SEÇÃO CALENDÁRIO (ESPECÍFICO) -->
+    <div id="sectionCalendario" class="view-section">
+        <div class="calendar-picker-box">
+            <label style="color:var(--accent); font-weight:bold; font-size: 12px;">Selecione uma Data para Eventos Específicos</label>
+            <input type="date" id="datePicker">
+        </div>
+    </div>
+
+    <!-- ÁREA COMUM DE LISTA E PROGRESSO -->
+    <div class="progress-card">
+        <div class="progress-bar-bg">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
+            <span id="labelContexto" style="text-transform: uppercase;">SEGUNDA</span>
+            <span id="labelPercent" style="color: var(--success);">0%</span>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="Adicionar tarefa...">
+        <button class="btn-add" id="btnAdd">+</button>
+    </div>
+
+    <div class="task-list" id="taskList"></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, update, remove, off } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB14W4fP1HzQvglojai5mcK96ga_u-p0GI",
+        authDomain: "projeto-area-artistica.firebaseapp.com",
+        databaseURL: "https://projeto-area-artistica-default-rtdb.firebaseio.com",
+        projectId: "projeto-area-artistica",
+        storageBucket: "projeto-area-artistica.appspot.com",
+        messagingSenderId: "561604278068",
+        appId: "1:561604278068:web:43b9846f5279a1d85f1761"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Variáveis de Controle
+    let modoAtual = 'rotina'; // 'rotina' ou 'calendario'
+    let diaSemanaAtual = 'segunda';
+    let dataCalendarioAtual = ''; 
+    let listenerAtivo = null;
+
+    // Elementos UI
+    const taskList = document.getElementById('taskList');
+    const taskInput = document.getElementById('taskInput');
+    const btnAdd = document.getElementById('btnAdd');
+    const labelContexto = document.getElementById('labelContexto');
+    const datePicker = document.getElementById('datePicker');
+
+    // Trocar modo (Rotina vs Calendário)
+    function setModo(modo) {
+        modoAtual = modo;
+        document.querySelectorAll('.nav-mode-btn').forEach(b => b.classList.toggle('active', b.id.includes(modo.charAt(0).toUpperCase() + modo.slice(1))));
+        document.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id.includes(modo.charAt(0).toUpperCase() + modo.slice(1))));
+        
+        if(modo === 'rotina') {
+            conectarBanco(`rotina_semanal/${diaSemanaAtual}`);
+        } else {
+            if(dataCalendarioAtual) conectarBanco(`eventos_calendario/${dataCalendarioAtual}`);
+            else taskList.innerHTML = "<p style='text-align:center; padding:20px; color:var(--text-muted)'>Escolha uma data acima</p>";
+        }
+    }
+
+    // Conectar ao Firebase
+    function conectarBanco(caminho) {
+        if (listenerAtivo) off(listenerAtivo);
+        const dbRef = ref(db, caminho);
+        listenerAtivo = dbRef;
+        
+        labelContexto.innerText = caminho.split('/').pop().replace(/-/g, '/');
+        
+        onValue(dbRef, (snapshot) => {
+            render(snapshot.val() || {});
+        });
+    }
+
+    function render(tasks) {
+        taskList.innerHTML = "";
+        const entries = Object.entries(tasks);
+        let concluido = 0;
+
+        entries.forEach(([id, task]) => {
+            if(task.done) concluido++;
+            const item = document.createElement('div');
+            item.className = `task-item ${task.done ? 'done' : ''}`;
+            item.innerHTML = `
+                <div class="checkbox" onclick="window.toggleTask('${id}', ${task.done})">${task.done ? '✓' : ''}</div>
+                <div class="task-text">${task.text}</div>
+                <button class="btn-del" onclick="window.deleteTask('${id}')">✕</button>
+            `;
+            taskList.appendChild(item);
+        });
+
+        const perc = entries.length > 0 ? Math.round((concluido / entries.length) * 100) : 0;
+        document.getElementById('progressBar').style.width = perc + "%";
+        document.getElementById('labelPercent').innerText = perc + "%";
+    }
+
+    // Ações do Usuário
+    window.toggleTask = (id, status) => {
+        const caminho = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}/${id}` : `eventos_calendario/${dataCalendarioAtual}/${id}`;
+        update(ref(db, caminho), { done: !status });
+    };
+
+    window.deleteTask = (id) => {
+        const caminho = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}/${id}` : `eventos_calendario/${dataCalendarioAtual}/${id}`;
+        if(confirm("Excluir?")) remove(ref(db, caminho));
+    };
+
+    btnAdd.onclick = () => {
+        const text = taskInput.value.trim();
+        if(!text) return;
+        const caminho = modoAtual === 'rotina' ? `rotina_semanal/${diaSemanaAtual}` : `eventos_calendario/${dataCalendarioAtual}`;
+        if(modoAtual === 'calendario' && !dataCalendarioAtual) return alert("Selecione uma data primeiro!");
+        
+        push(ref(db, caminho), { text, done: false });
+        taskInput.value = "";
+    };
+
+    // Listeners de Eventos
+    document.getElementById('btnModeRotina').onclick = () => setModo('rotina');
+    document.getElementById('btnModeCalendario').onclick = () => setModo('calendario');
+
+    document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            diaSemanaAtual = btn.dataset.dia;
+            conectarBanco(`rotina_semanal/${diaSemanaAtual}`);
+        };
+    });
+
+    datePicker.onchange = (e) => {
+        dataCalendarioAtual = e.target.value;
+        conectarBanco(`eventos_calendario/${dataCalendarioAtual}`);
+    };
+
+    // Início
+    setModo('rotina');
+
+</script>
+</body>
+</html>
